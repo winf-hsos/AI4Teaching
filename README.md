@@ -1,5 +1,13 @@
 # Applications of AI in Teaching
 
+## Installation
+
+You can install `ai4teaching`` with pip:
+
+```bash
+pip install git+https://github.com/winf-hsos/AI4Teaching.git
+```
+
 ## Usage
 
 All AI tools that depend on OpenAI's API need access to a valid API key. Make sure you have the environement variable `OPENAI_API_KEY` set to your API key. You can do this from your Python program with the following code:
@@ -13,9 +21,9 @@ Make sure to replace `...` with your API key.
 
 ## Tools and how to use them
 
-### ChatGPT
+### ChatGPT Clone
 
-To use the copy of ChatGPT you can run the following code:
+To use the clone of ChatGPT you can run the following code:
 
 ```python
 from ai4teaching import ChatGPTAssistant
