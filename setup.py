@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(
-    name='AI4Teaching',
+    name='ai4teaching',
     version='0.1',
     packages=find_packages(),
     description='API for useful AI tool in learning and teaching scenarios.',
