@@ -45,3 +45,15 @@ The `config.json` must exist, but it is sufficient to provide an empty JSON obje
 ```json
 {}
 ```	
+
+### OpenAI Assistant
+
+The OpenAI Assistant uses the Assistant API and adds knowledge to a chatbot.
+
+### Quiz Assistant
+
+The Quiz Assistant can create quiz questions for a topic or based on a given content.
+
+### Grading Assistant
+
+The Grading Assistant can provide feedback and scores for different evaluation criteria.
