@@ -2,7 +2,7 @@
 
 ## Installation
 
-You can install `ai4teaching`` with pip:
+You can install `ai4teaching` with pip:
 
 ```bash
 pip install git+https://github.com/winf-hsos/AI4Teaching.git
