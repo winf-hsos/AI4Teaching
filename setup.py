@@ -5,8 +5,8 @@ setup(
     version='0.1',
     packages=find_packages(),
     description='API for useful AI tool in learning and teaching scenarios.',
-    author='Nicolas Meseth',
-    author_email='n.meseth@hs-osnabrueck.de',
+    author='Nicolas Meseth, Philipp Zmijewski',
+    author_email='n.meseth@hs-osnabrueck.de, philipp.zmijewski@hs-osnabrueck.de',
     url='https://github.com/winf-hsos/AI4Teaching',
     install_requires=[
         'openai',
