@@ -1,4 +1,5 @@
 .env
 frontend/
 test/
+__pycache__/
 todos.md
