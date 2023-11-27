@@ -37,7 +37,7 @@ class VideoProcessor(DocumentProcessor):
         self._embed_document_chunks(previous_step_name=DocumentProcessor.STEP_CREATE_DOCUMENT_CHUNKS)
 
         # Summarize the chunks
-        self._summarize_document_chunks()
+        #self._summarize_document_chunks()
 
         self.document["processing_outputs"] = self.step_ouput_files
 

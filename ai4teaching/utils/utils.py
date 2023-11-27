@@ -20,7 +20,7 @@ def log(message, type='info'):
     # Format it to include only minutes
     formatted_datetime = current_datetime.strftime("%Y-%m-%d %H:%M:%S: ")
 
-    print(color + formatted_datetime + str(message) + colorama.Fore.RESET)
+    print(f"{color}{formatted_datetime}{colorama.Fore.RESET}{str(message)}")
 
 def make_sure_directory_exists(directory):
     if not os.path.exists(directory):

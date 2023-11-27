@@ -103,7 +103,7 @@ class DocumentProcessor:
         make_sure_directory_exists(directory)
 
         file_ending = "mp4" if step_name == DocumentProcessor.STEP_EXTRACT_AUDIO_FROM_YOUTUBE else "json" 
-        file_name = os.path.join(directory, f"{self._create_safe_file_name(self.document['title'])}_{step_name}.{file_ending}")
+        file_name = os.path.join(directory, f"{self._create_file_name(self.document['id'])}_{step_name}.{file_ending}")
         
         # Set the out file name for the step
         self.step_ouput_files[step_name] = file_name
@@ -119,8 +119,6 @@ class DocumentProcessor:
             # Get the create date of the current step
             current_step_output_create_date = os.path.getmtime(file_name)
 
-            #log(f"Current time: {current_step_output_create_date}", type="debug")
-            
             # Check if the previous step is newer than the current step
             if previous_step_output_created_date > current_step_output_create_date:
                 log(f"Processing step >{step_name}< is required.", type="debug")
@@ -133,15 +131,8 @@ class DocumentProcessor:
             # Get the create date of the previous step
             previous_processing_output_file_create_date = os.path.getmtime(previous_processing_output_file_name)
 
-            #log(f"Previous file: {previous_processing_output_file_name}", type="debug")
-            #log(f"Previous time: {previous_processing_output_file_create_date}", type="debug")
-
-
             # Get the create date of the current step
             current_processing_output_file_create_date = os.path.getmtime(file_name)
-
-            #log(f"Current file: {file_name}", type="debug")
-            #log(f"Current time: {current_processing_output_file_create_date}", type="debug")
             
             # Check if the previous step is newer than the current step
             if previous_processing_output_file_create_date > current_processing_output_file_create_date:
@@ -181,9 +172,8 @@ class DocumentProcessor:
             "metadata" : {}
             }
 
-    def _create_safe_file_name(self, file_name):
-    
-        keepcharacters = (' ','.','_', '-')
+    def _create_file_name(self, file_name):
+        #keepcharacters = (' ','.','_', '-')
         # Source: https://stackoverflow.com/questions/7406102/create-sane-safe-filename-from-any-unsafe-string
-        safe_file_name = "".join(c for c in file_name if c.isalnum() or c in keepcharacters).rstrip()
-        return safe_file_name
+        #safe_file_name = "".join(c for c in file_name if c.isalnum() or c in keepcharacters).rstrip()
+        return file_name

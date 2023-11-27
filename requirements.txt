@@ -1,0 +1,7 @@
+pytube
+moviepy
+colorama
+openai
+requests
+chromadb
+streamlit

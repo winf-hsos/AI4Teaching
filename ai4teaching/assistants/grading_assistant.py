@@ -13,12 +13,14 @@ class GradingAssistant(Assistant):
         self.exercises_file = os.path.join(self.root_path,"exercises.json")
 
         self.openai_client = OpenAI()
-        self.openai_model = "gpt-4-1106-preview"
-        self.feedback_language = self.config["feedback_language"]
+
+        self._check_if_expected_properties_exist_in_config(["openai_model"])
+        self.openai_model = self.config["openai_model"] if "openai_model" in self.config else "gpt-4-1106-preview"
+        
         self.last_prompt = []
 
     def add_exercise(self, title, instructions, model_solution, criteria=None, grading_function_schema=None, template_exercise=None, overwrite=True):
-        log(f"Adding exercise to GradingAssistant: {title}", type="debug")
+        log(f"Adding exercise to GradingAssistant: >{title}<", type="debug")
         
         exercises = self.get_exercises()
 
@@ -26,11 +28,11 @@ class GradingAssistant(Assistant):
         for exercise in exercises:
             if exercise["title"] == title:
                 if overwrite == True:
-                    log(f"Exercise with title {title} already exists. Overwriting.", type="debug")
+                    log(f"Exercise with title >{title}< already exists. Overwriting.", type="debug")
                     exercises.remove(exercise)
                     break
                 else:
-                    log(f"Exercise with title {title} already exists and overwriting is not allowed.", type="error")
+                    log(f"Exercise with title >{title}< already exists and overwriting is not allowed.", type="error")
                 
         if template_exercise is not None:
             criteria = template_exercise["criteria"]
@@ -78,7 +80,7 @@ class GradingAssistant(Assistant):
         return None
 
     def grade_solution(self, exercise_title, student_solution):
-        log(f"Grading solution for exercise {exercise_title}", type="debug")
+        log(f"Grading solution for exercise >{exercise_title}< using >{self.openai_model}<", type="debug")
 
         exercises = self.get_exercises()
 
@@ -92,11 +94,11 @@ class GradingAssistant(Assistant):
             return
 
         exercise_instructions = exercise["instructions"]
-        grading_function_schema = exercise["grading_function_schema"]
         grading_criteria = exercise["grading_criteria"]
         model_solution = exercise["model_solution"]
+        grading_function_schema = exercise["grading_function_schema"]
 
-        system_prompt = self._create_system_prompt(exercise_instructions, model_solution, grading_criteria, grading_function_schema)
+        system_prompt = self._create_system_prompt(exercise_instructions, model_solution, grading_criteria)
 
         #log(system_prompt, type="debug")
 
@@ -123,7 +125,7 @@ class GradingAssistant(Assistant):
     def get_last_prompt(self):
         return self.last_prompt
     
-    def _create_system_prompt(self, exercise_instructions, model_solution, grading_criteria, grading_function_schema):
+    def _create_system_prompt(self, exercise_instructions, model_solution, grading_criteria):
         system_prompt = f"""Du bist ein Dozent für die Einführung in die Programmierung mit Python. Deine Aufgabe ist es, Lösungen von Studierenden zu prüfen und anschließend Feedback, Hinweise zur Verbesserung des Codes, sowie eine Punktzahl für jedes Bewertungskriterium zurückmelden. Um ein angemessenes Feedback, Hinweise und Punktzahlen zu geben, gebe ich dir die Aufgabenstellung für die Übung zusammen mit einem Beispiel für eine sehr gute Lösung, die bei allen Bewertungskriterien eine perfekte Punktzahl erhalten würde. Bewerte die Lösung der Schülerinnen und Schüler anhand der folgenden Kriterien und vergib jeweils eine Punktzahl zwischen 0 und 5:
         
         {grading_criteria}
@@ -138,7 +140,7 @@ class GradingAssistant(Assistant):
         %%model_solution%%
         ```
 
-        Verfasse dein verbales Feedback und die nützlichen Hinweise auf {self.feedback_language}.
+        Verfasse dein verbales Feedback und die nützlichen Hinweise auf Deutsch.
         """
 
         # Remove tabs

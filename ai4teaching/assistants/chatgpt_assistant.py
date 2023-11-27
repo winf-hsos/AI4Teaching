@@ -19,6 +19,10 @@ class ChatGPTAssistant(Assistant):
         self.messages = []
         self.system_message = None
 
+    '''
+    Returns the complete message history with the assistant's response as
+    the last message
+    '''
     def chat(self, message, model_display_name="GPT-3.5"):
         # Get model name for display name
         model_name = self._get_model_name_for_display_name(model_display_name)
@@ -41,13 +45,16 @@ class ChatGPTAssistant(Assistant):
 
         return self._get_cleaned_messages_copy()
     
-    def _get_cleaned_messages_copy(self):
-        # Remove system message
-        messages_copy = self.messages.copy()
-        if self.system_message is not None:
-            messages_copy.pop(0)
-        return messages_copy
+    '''
+    Returns only the response (last message) of the chat
+    '''
+    def chat_text(self, message, model_display_name="GPT-3.5"):
+        messages = self.chat(message, model_display_name)
+        return messages[-1]["content"]
 
+    '''
+    Reset the message history
+    '''
     def reset(self):
         log("Resetting ChatGPTAssistant", type="debug")
         self.messages = []
@@ -81,3 +88,10 @@ class ChatGPTAssistant(Assistant):
             if model["display_name"] == model_display_name:
                 return model["model_name"]
         return "gpt-3.5-turbo-1106"
+    
+    def _get_cleaned_messages_copy(self):
+        # Remove system message
+        messages_copy = self.messages.copy()
+        if self.system_message is not None:
+            messages_copy.pop(0)
+        return messages_copy

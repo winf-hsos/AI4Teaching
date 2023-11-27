@@ -5,22 +5,32 @@ from ai4teaching.utils import log
 class Assistant:
     def __init__(self, config_file, depending_on_assistant=None):
         self.config_file = config_file
+
+        # Validate expected properties in config file
+        expected_properties = ["assistant_type", "assistant_name"]
+        self._check_if_expected_properties_exist_in_config(expected_properties)
+        
         self.root_path = os.path.dirname(os.path.abspath(config_file))
         self.depending_on_assistant = depending_on_assistant
         self._setup()
     
     def _setup(self):
-        # Read the config JSON file
-        with open(self.config_file, encoding="utf-8") as config_file:
-            self.config = json.load(config_file)
+        
+        if "embedding_model" in self.config:
+            if self.config["embedding_model"] == "text-embedding-ada-002":
+                # Set up the embedding model
+                from ai4teaching import EmbeddingModel
+                self.embedding_model = EmbeddingModel()
+            else:
+                log(f"Unsupported embedding model '{self.config['embedding_model']}'.", type="error")
 
-        # Set up the embedding model
-        from ai4teaching import EmbeddingModel
-        self.embedding_model = EmbeddingModel()
-
-        # Set up the large language model
-        from ai4teaching import LargeLanguageModel
-        self.llm = LargeLanguageModel()
+        if "large_language_model" in self.config:
+            if self.config["large_language_model"] in ["gpt-3.5-turbo-1106", "gpt-4-1106-preview"]:
+                # Set up the large language model
+                from ai4teaching import LargeLanguageModel
+                self.llm = LargeLanguageModel(model_name=self.config["large_language_model"])
+            else:
+                log(f"Unsupported large language model '{self.config['large_language_model']}'.", type="error")
 
         # Reference the knowledge base and vector database, if this assistant depends on another assistant
         if self.depending_on_assistant is not None:
@@ -49,12 +59,28 @@ class Assistant:
             
             log(f"Added {self.vector_db.get_documents_count()} document chunks to {vector_db_type}.", type="success")
 
+    def _check_if_expected_properties_exist_in_config(self, expected_properties):
+        # Read the config JSON file
+        with open(self.config_file, encoding="utf-8") as config_file:
+            self.config = json.load(config_file)
+
+        for property in expected_properties:
+            if property not in self.config:
+                log(f"Property '{property}' not found in config file '{self.config_file}'.", type="warning")
+
+
     def get_list_of_knowledge_base_documents(self):
         if self.knowledge_base is None:
             log(f"Assistant does not have a knowledge base.", type="warning")
             return None
         
         return self.knowledge_base.get_documents()
+    
+    def who_are_you(self):
+        return {
+            "assistant_type": self.config['assistant_type'],
+            "assistant_name": self.config['assistant_name']
+        }
     
     def get_list_of_vector_db_documents(self):
         if self.vector_db is None:

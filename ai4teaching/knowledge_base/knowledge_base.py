@@ -1,4 +1,5 @@
 import json
+import os
 from ai4teaching import log
 from ai4teaching import EmbeddingModel
 from ai4teaching import LargeLanguageModel
@@ -6,19 +7,23 @@ from ai4teaching import DocumentProcessor
 
 class KnowledgeBase:
     
-    def __init__(self, index_file, embedding_model: EmbeddingModel, llm: LargeLanguageModel):
-        self.index_file = index_file
+    def __init__(self, index_file_name, embedding_model: EmbeddingModel, llm: LargeLanguageModel):
         self.embedding_model = embedding_model
         self.llm = llm
 
-        self._setup()
+        self._setup(index_file_name)
 
-    def _setup(self):
-        # Read the index file
-        with open(self.index_file, encoding="utf-8") as index_file:
+    def _setup(self, index_file_name):
+        with open(index_file_name, encoding="utf-8") as index_file:
+            self.index_file = os.path.abspath(index_file.name)
+            self.index_directory = os.path.dirname(self.index_file)
             self.index = json.load(index_file)
         
         # Iterate through all documents in the index and check if they are processed
+        if "documents" not in self.index:
+            log(f"Knowledge base index does not contain documents. Adding empty list.", type="warning")
+            self.index["documents"] = []
+
         index_documents = self.index["documents"]
         
         # Process the documents in the index (steps are only performed if necessary)
@@ -60,6 +65,14 @@ class KnowledgeBase:
             if document["status"] == "inactive":
                 log(f"Skipping document >{document['title']}< because it is inactive", type="info")
                 return document
+        
+        # Check if processing outputs are present
+        if "processing_outputs_path" not in self.index:
+            # Get the absolute path of the index_file and add subdirectory "outputs"
+            import os
+            processing_outputs_path = os.path.join(self.index_directory, "outputs")
+            log(f"Knowledge base index does not contain processing outputs path. Adding >{processing_outputs_path}< string.", type="warning")
+            self.index["processing_outputs_path"] = processing_outputs_path
 
         type = document["type"]
         if type == "text/plain":
@@ -144,8 +157,13 @@ class KnowledgeBase:
 
     '''
     Add and process (if necessary) a YouTube video to the knowledge base
+
+    TODO: This should only add to index, not process. Separate function "process_all" to check if
+    processing is necessary and process all documents in the index
     '''
     def add_youtube_video(self, youtube_url):
+
+        log(f"Adding YouTube video >{youtube_url}< to knowledge base", type="info")
 
         # Get video metadata
         from pytube import YouTube
@@ -160,9 +178,15 @@ class KnowledgeBase:
             "type" : "video/youtube"
         }
         
-        processed_document = self._process_youtube_video(document)
-        self.index["documents"].append(processed_document)
+        #processed_document = self._process_youtube_video(document)
+        self.index["documents"].append(document)
 
         # Save the index file back to disk
         self._save_index()
     
+    ''' 
+    This function checks wether processing for any document in the index is necessary
+    and performs the processing if necessary
+    '''
+    def prcoess_all(self):
+        pass
