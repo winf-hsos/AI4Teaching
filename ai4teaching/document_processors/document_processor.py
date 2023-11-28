@@ -173,7 +173,4 @@ class DocumentProcessor:
             }
 
     def _create_file_name(self, file_name):
-        #keepcharacters = (' ','.','_', '-')
-        # Source: https://stackoverflow.com/questions/7406102/create-sane-safe-filename-from-any-unsafe-string
-        #safe_file_name = "".join(c for c in file_name if c.isalnum() or c in keepcharacters).rstrip()
         return file_name

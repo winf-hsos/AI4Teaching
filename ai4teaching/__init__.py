@@ -1,11 +1,11 @@
 from ai4teaching.utils.utils import log
 
-from ai4teaching.llm.embedding_model import EmbeddingModel
-from ai4teaching.llm.llm import LargeLanguageModel
+from ai4teaching.models.embedding_model import EmbeddingModel
+from ai4teaching.models.llm import LargeLanguageModel
 
-from ai4teaching.knowledge_base.document_processor.document_processor import DocumentProcessor
-from ai4teaching.knowledge_base.document_processor.video_processor import VideoProcessor
-from ai4teaching.knowledge_base.document_processor.notion_processor import NotionProcessor
+from ai4teaching.document_processors.document_processor import DocumentProcessor
+from ai4teaching.document_processors.video_processor import VideoProcessor
+from ai4teaching.document_processors.notion_processor import NotionProcessor
 from ai4teaching.knowledge_base.knowledge_base import KnowledgeBase
 
 from ai4teaching.assistants.assistant import Assistant
