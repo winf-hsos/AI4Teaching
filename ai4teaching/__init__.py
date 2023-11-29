@@ -3,9 +3,18 @@ from ai4teaching.utils.utils import log
 from ai4teaching.models.embedding_model import EmbeddingModel
 from ai4teaching.models.llm import LargeLanguageModel
 
+from ai4teaching.processing.document_reader import DocumentReader
+from ai4teaching.processing.text_reader import TextReader
+from ai4teaching.processing.notion_page_reader import NotionPageReader
+from ai4teaching.processing.video_reader import VideoReader
+from ai4teaching.processing.pdf_reader import PDFReader
+from ai4teaching.processing.text_chunker import TextChunker
+from ai4teaching.processing.text_embedder import TextEmbedder
+
 from ai4teaching.document_processors.document_processor import DocumentProcessor
 from ai4teaching.document_processors.video_processor import VideoProcessor
 from ai4teaching.document_processors.notion_processor import NotionProcessor
+
 from ai4teaching.knowledge_base.knowledge_base import KnowledgeBase
 
 from ai4teaching.assistants.assistant import Assistant

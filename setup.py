@@ -13,8 +13,11 @@ setup(
         'chromadb',
         'pytube',
         'moviepy',
-        'streamlit',
-        'colorama'
+        'langchain',
+        'colorama',
+        'mimetypes-magic',
+        'unstructured',
+        'unstructured[pdf]'
     ],
     license='CC BY-NC-SA 4.0'    
 )

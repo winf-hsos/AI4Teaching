@@ -1,7 +1,12 @@
+python-magic
+python-magic-bin
 pytube
 moviepy
 colorama
 openai
 requests
 chromadb
+unstructured
+unstructured[pdf],
+langchain,
 streamlit
