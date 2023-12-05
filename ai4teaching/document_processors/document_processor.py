@@ -3,6 +3,8 @@ from ai4teaching.utils import log, make_sure_directory_exists
 import json
 import os
 import uuid
+from langchain.docstore.document import Document
+from langchain.text_splitter import CharacterTextSplitter
 
 class DocumentProcessor:
 
@@ -14,6 +16,9 @@ class DocumentProcessor:
     STEP_EXTRACT_AUDIO_FROM_YOUTUBE = "extract_audio_from_youtube"
     STEP_TRANSCRIBE_AUDIO = "transcribe_audio"
     STEP_CREATE_TRANSCRIPT_SEGMENTS = "create_transcript_segments"
+
+    # PDF Processor
+    STEP_EXTRACT_TEXT_FROM_PDF = "extract_text_from_pdf"
 
     # All processors
     STEP_CREATE_DOCUMENT_CHUNKS = "create_document_chunks"
@@ -49,7 +54,22 @@ class DocumentProcessor:
         
         # Read the result from the previous step
         previous_step_result = self._load_json_file_for_step(previous_step_name)
-        
+
+        chunk_size = 1000
+        chunk_overlap_pct = 0.1
+
+        text_splitter = CharacterTextSplitter(
+            separator = "\n\n",
+            chunk_size = chunk_size,
+            chunk_overlap  = int(chunk_size * chunk_overlap_pct),
+            length_function = len,
+            is_separator_regex = False,
+        )
+
+        langchain_document = Document(page_content=previous_step_result["text"])
+        langchain_document.metadata = previous_step_result["metadata"]
+        splits = text_splitter.split_documents([langchain_document])
+
         chunks_document = { 
             "id" : self.document["id"],
             "document_uri" : self.document["document_uri"],
@@ -59,11 +79,11 @@ class DocumentProcessor:
             "chunks" : [] 
                         }
         
-        for i, content in enumerate(previous_step_result["content"]):
+        for i, split in enumerate(splits):
             chunk = { 
                 "chunk_id" : f"{chunks_document['id']}_{i}",
-                "metadata" : content["metadata"] if "metadata" in content else {},
-                "content" : content["text"]
+                "metadata" : split.metadata,
+                "content" : split.page_content
             }
 
             chunks_document["chunks"].append(chunk)

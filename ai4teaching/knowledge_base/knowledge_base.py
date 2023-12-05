@@ -81,6 +81,11 @@ class KnowledgeBase:
             return self._process_youtube_video(document)
         elif type == "notion/page":
             return self._process_notion_page(document)
+        elif type == "application/pdf":
+            return self._process_pdf_document(document)
+        else:
+            log(f"Document type >{type}< not supported", type="error")
+            return document
 
     def _process_text_document(self, document, processed_documents_path):
         pass
@@ -96,7 +101,13 @@ class KnowledgeBase:
         processor = NotionProcessor(document, self.index["processing_outputs_path"], self.embedding_model)
         processed_document = processor.process()
         return processed_document
-        
+
+    def _process_pdf_document(self, document):
+        from ai4teaching import PDFProcessor
+        processor = PDFProcessor(document, self.index["processing_outputs_path"], self.embedding_model)
+        processed_document = processor.process()
+        return processed_document
+
     def get_embedded_chunks_files(self):
         return self._get_output_files_for_process_step(DocumentProcessor.STEP_EMBED_DOCUMENT_CHUNKS)
 
@@ -184,9 +195,42 @@ class KnowledgeBase:
         # Save the index file back to disk
         self._save_index()
     
+    def add_pdf_document(self, pdf_file):
+        log(f"Adding PDF document >{pdf_file}< to knowledge base", type="info")
+
+        # Get title from PDF metadata
+        from PyPDF2 import PdfReader
+        pdf = PdfReader(pdf_file)
+        
+        if "title" in pdf.metadata:
+            title = pdf.metadata.title
+        else:
+            # Get the filename only from the pdf_file path
+            pdf_file_name = os.path.basename(pdf_file)
+            title = pdf_file_name.replace(".pdf", "")
+
+        document = {
+            "title" : title,
+            "document_uri" : pdf_file,
+            "type" : "application/pdf"
+        }
+
+        # Check if document alreasy exists in index
+        for doc in self.index["documents"]:
+            if doc["document_uri"] == document["document_uri"]:
+                log(f"Document >{document['document_uri']}< already exists in index", type="error")
+                return
+
+        self.index["documents"].append(document)
+        self._save_index()
+
     ''' 
     This function checks wether processing for any document in the index is necessary
     and performs the processing if necessary
     '''
-    def prcoess_all(self):
-        pass
+    def process(self):
+        log(f"Processing documents in knowledge base", type="info")
+        for document in self.index["documents"]:
+            document = self._process_document(document)
+
+        self._save_index()

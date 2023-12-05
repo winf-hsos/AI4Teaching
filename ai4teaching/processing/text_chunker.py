@@ -17,6 +17,7 @@ class TextChunker:
 
         langchain_document = Document(page_content=text)
         splits = text_splitter.split_documents([langchain_document])
+        
         split_documents = [ { "text":  s.page_content, "metadata" : s.metadata } for s in splits]
         return split_documents
 

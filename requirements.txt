@@ -1,6 +1,7 @@
 python-magic
 python-magic-bin
 pytube
+PyPDF2
 moviepy
 colorama
 openai

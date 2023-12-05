@@ -12,6 +12,7 @@ setup(
         'openai',
         'chromadb',
         'pytube',
+        'PyPDF2',
         'moviepy',
         'langchain',
         'colorama',
