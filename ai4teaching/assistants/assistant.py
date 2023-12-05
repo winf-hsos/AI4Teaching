@@ -10,7 +10,7 @@ class Assistant:
         expected_properties = ["assistant_type", "assistant_name"]
         self._check_if_expected_properties_exist_in_config(expected_properties)
         
-        self.root_path = os.path.dirname(os.path.abspath(config_file))
+        self.root_path = os.path.dirname(os.path.abspath(config_file)) if config_file is not None else ""
         self.depending_on_assistant = depending_on_assistant
         self._setup()
     

@@ -4,7 +4,7 @@ from openai import OpenAI
 
 class ChatGPTAssistant(Assistant):
 
-    def __init__(self, config_file, depending_on_assistant=None):
+    def __init__(self, config_file=None, depending_on_assistant=None):
         log("Initializing ChatGPTAssistant", type="debug")
         log(f"ChatGPTAssistant depends on {depending_on_assistant}", type="debug") if depending_on_assistant else None
         super().__init__(config_file, depending_on_assistant)
