@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='ai4teaching',
-    version='0.1.2',
+    version='0.1.3',
     packages=find_packages(),
     description='API for useful AI tool in learning and teaching scenarios.',
     author='Nicolas Meseth, Philipp Zmijewski',
@@ -16,7 +16,6 @@ setup(
         'moviepy',
         'langchain',
         'colorama',
-        'mimetypes-magic',
         'python-magic',
         'python-magic-bin',
         'unstructured',
